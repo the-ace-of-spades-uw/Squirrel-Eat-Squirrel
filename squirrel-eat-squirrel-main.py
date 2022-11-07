@@ -2,7 +2,11 @@
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
+<<<<<<< HEAD
 # ***Team intials: Asa L (AL), Meridan D (MD) Sarina S (SS)), Hoyt S (HS)***
+=======
+# ur mom
+>>>>>>> 30f46fcaf3b3896647c33b76b741adb1b96a3837
 
 # Importing differnt modules AL
 import random, sys, time, math, pygame,os
