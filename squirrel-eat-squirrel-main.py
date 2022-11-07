@@ -2,6 +2,7 @@
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
+# ur mom
 
 import random, sys, time, math, pygame,os
 from pygame.locals import *
