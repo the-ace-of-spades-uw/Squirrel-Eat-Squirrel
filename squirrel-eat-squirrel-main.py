@@ -2,8 +2,11 @@
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
+# ***Team intials: Asa L (AL), Meridan D (MD) Sarina S (SS)), Hoyt S (HS)***
 
+# Importing differnt modules AL
 import random, sys, time, math, pygame,os
+# Import pygame locals into script namespace AL
 from pygame.locals import *
 
 FPS = 30 # frames per second to update the screen
@@ -12,6 +15,7 @@ WINHEIGHT = 480 # height in pixels
 HALF_WINWIDTH = int(WINWIDTH / 2)
 HALF_WINHEIGHT = int(WINHEIGHT / 2)
 
+# Differnt colours expressed as tuples of RGB values AL
 GRASSCOLOR = (24, 255, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
@@ -34,7 +38,7 @@ DIRCHANGEFREQ = 2    # % chance of direction change per frame
 LEFT = 'left'
 RIGHT = 'right'
 
-#Relative path system AL
+#Relative path system using os module AL
 game_folder = os.path.dirname(__file__)
 assets_folder = os.path.join(game_folder, "assets")
 
@@ -66,9 +70,13 @@ Grass data structure keys:
 """
 
 def main():
+    """
+    (None) -> None
+    Loads images and surfacs and runs the main game AL
+    """
     global FPSCLOCK, DISPLAYSURF, BASICFONT, L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES
     
-    pygame.init()
+    pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
     pygame.display.set_icon(pygame.image.load(os.path.join(assets_folder,'gameicon.png')))
     DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT))
@@ -171,15 +179,21 @@ def runGame():
         while len(squirrelObjs) < NUMSQUIRRELS:
             squirrelObjs.append(makeNewSquirrel(camerax, cameray))
 
-        # adjust camerax and cameray if beyond the "camera slack"
+        # Find the distance between game world coordinates of the centre of the camera
+        # and the game world codinates of the center of player, if this value is greater than cameraslack
+        # move the camera a fixed distacne from the players center AL
         playerCenterx = playerObj['x'] + int(playerObj['size'] / 2)
         playerCentery = playerObj['y'] + int(playerObj['size'] / 2)
+        # move camera left AL
         if (camerax + HALF_WINWIDTH) - playerCenterx > CAMERASLACK:
             camerax = playerCenterx + CAMERASLACK - HALF_WINWIDTH
+        # move camera right AL
         elif playerCenterx - (camerax + HALF_WINWIDTH) > CAMERASLACK:
             camerax = playerCenterx - CAMERASLACK - HALF_WINWIDTH
+        # move camera up AL
         if (cameray + HALF_WINHEIGHT) - playerCentery > CAMERASLACK:
             cameray = playerCentery + CAMERASLACK - HALF_WINHEIGHT
+        # move camera down AL
         elif playerCentery - (cameray + HALF_WINHEIGHT) > CAMERASLACK:
             cameray = playerCentery - CAMERASLACK - HALF_WINHEIGHT
 
@@ -217,32 +231,34 @@ def runGame():
         # draw the health meter
         drawHealthMeter(playerObj['health'])
 
-        for event in pygame.event.get(): # event handling loop
+        for event in pygame.event.get(): # event handling loop, if user exits the windown terminate program AL
             if event.type == pygame.QUIT:
                 terminate()
 
+            # Handle key down (pressing key) events AL
             elif event.type == pygame.KEYDOWN:
-                if event.key in (pygame.K_UP, pygame.K_w):
+                if event.key in (pygame.K_UP, pygame.K_w): #Either the up arrow key or (W) key can be used to move up AL
                     moveDown = False
                     moveUp = True
-                elif event.key in (pygame.K_DOWN, pygame.K_s):
+                elif event.key in (pygame.K_DOWN, pygame.K_s): #Either the down arrow key or (S) key can be used to move down AL
                     moveUp = False
                     moveDown = True
-                elif event.key in (pygame.K_LEFT, pygame.K_a):
+                elif event.key in (pygame.K_LEFT, pygame.K_a): #Either the left arrow key or (A) key can be used to move left AL
                     moveRight = False
                     moveLeft = True
-                    if playerObj['facing'] != LEFT: # change player image
+                    if playerObj['facing'] != LEFT: # change the player image such that the sprite is facing left AL
                         playerObj['surface'] = pygame.transform.scale(L_SQUIR_IMG, (playerObj['size'], playerObj['size']))
                     playerObj['facing'] = LEFT
-                elif event.key in (pygame.K_RIGHT, pygame.K_d):
+                elif event.key in (pygame.K_RIGHT, pygame.K_d): #Either the right arrow key or (D) key can be used to move right AL
                     moveLeft = False
                     moveRight = True
-                    if playerObj['facing'] != RIGHT: # change player image
+                    if playerObj['facing'] != RIGHT: # change player image such that the sprite is right AL
                         playerObj['surface'] = pygame.transform.scale(R_SQUIR_IMG, (playerObj['size'], playerObj['size']))
                     playerObj['facing'] = RIGHT
-                elif winMode and event.key == pygame.K_r:
+                elif winMode and event.key == pygame.K_r: 
                     return
-
+            
+            # Handle key up events (i.e if the user stops pressing a movement key stop moving the player) AL
             elif event.type == pygame.KEYUP:
                 # stop moving the player's squirrel
                 if event.key in (pygame.K_LEFT, pygame.K_a):
@@ -254,7 +270,7 @@ def runGame():
                 elif event.key in (pygame.K_DOWN, pygame.K_s):
                     moveDown = False
 
-                elif event.key == pygame.K_ESCAPE:
+                elif event.key == pygame.K_ESCAPE: #Escape key can be used to quit program AL
                     terminate()
 
         if not gameOverMode:
@@ -278,11 +294,11 @@ def runGame():
             for i in range(len(squirrelObjs)-1, -1, -1):
                 sqObj = squirrelObjs[i]
                 if 'rect' in sqObj and playerObj['rect'].colliderect(sqObj['rect']):
-                    # a player/squirrel collision has occurred
+                    # a player/squirrel collision has occurred using pygames rect module to check AL
 
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
-                        # player is larger and eats the squirrel
-                        playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
+                        # player is larger and eats the squirre
+                        playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1 
                         del squirrelObjs[i]
 
                         if playerObj['facing'] == LEFT:
@@ -326,6 +342,10 @@ def drawHealthMeter(currentHealth):
 
 
 def terminate():
+    """
+    (None) -> None
+    Properly terminate program 
+    """
     pygame.quit()
     sys.exit()
 
@@ -397,5 +417,6 @@ def isOutsideActiveArea(camerax, cameray, obj):
     return not boundsRect.colliderect(objRect)
 
 
+# script behaviour of program AL
 if __name__ == '__main__':
     main()
