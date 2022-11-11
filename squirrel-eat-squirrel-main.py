@@ -3,10 +3,14 @@
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
 # ur mom
+# your mom
+# you're mom
+# shrekk
 
 import random, sys, time, math, pygame,os
 from pygame.locals import *
 
+# describes the window in which the game will appear on the screen   MD
 FPS = 30 # frames per second to update the screen
 WINWIDTH = 640 # width of the program's window, in pixels
 WINHEIGHT = 480 # height in pixels
@@ -17,6 +21,8 @@ GRASSCOLOR = (24, 255, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
+
+#assignment of the variables that will be used later in the creation of game functions   MD
 CAMERASLACK = 90     # how far from the center the squirrel moves before moving the camera
 MOVERATE = 9         # how fast the player moves
 BOUNCERATE = 6       # how fast the player bounces (large is slower)
@@ -66,7 +72,8 @@ Grass data structure keys:
     'grassImage' - an integer that refers to the index of the pygame.Surface object in GRASSIMAGES used for this grass object
 """
 
-def main():
+
+def main():  #allows the runGame() function to be put into script at the end    MD
     global FPSCLOCK, DISPLAYSURF, BASICFONT, L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES
     
     pygame.init()
@@ -85,7 +92,7 @@ def main():
 
     while True:
         runGame()
-
+        # loop that calls the game to run when main() is in the script   MD
 
 def runGame():
     # set up variables for the start of a new game
@@ -123,6 +130,7 @@ def runGame():
                  'bounce':0,
                  'health': MAXHEALTH}
 
+    # allows for certain actions to happen when assigned to keys later on   MD
     moveLeft  = False
     moveRight = False
     moveUp    = False
@@ -139,11 +147,13 @@ def runGame():
         if invulnerableMode and time.time() - invulnerableStartTime > INVULNTIME:
             invulnerableMode = False
 
-        # move all the squirrels
+        # move all the enemy squirrels
+        # could reduce the bounce by decreasing BOUNCERATE to have levitating, ghost squrrels   MD
         for sObj in squirrelObjs:
             # move the squirrel, and adjust for their bounce
             sObj['x'] += sObj['movex']
             sObj['y'] += sObj['movey']
+            # adjust movement increments to make ultra fast vampire squirrels   MD
             sObj['bounce'] += 1
             if sObj['bounce'] > sObj['bouncerate']:
                 sObj['bounce'] = 0 # reset bounce amount
@@ -167,6 +177,7 @@ def runGame():
                 del squirrelObjs[i]
 
         # add more grass & squirrels if we don't have enough.
+        # could adjust NUMGRASS to make a dense grass mode   MD
         while len(grassObjs) < NUMGRASS:
             grassObjs.append(makeNewGrass(camerax, cameray))
         while len(squirrelObjs) < NUMSQUIRRELS:
@@ -207,6 +218,7 @@ def runGame():
 
         # draw the player squirrel
         flashIsOn = round(time.time(), 1) * 10 % 2 == 1
+        # when player runs into enemy squirrel, they flash momentarily. this function creates the flashing effect   MD
         if not gameOverMode and not (invulnerableMode and flashIsOn):
             playerObj['rect'] = pygame.Rect( (playerObj['x'] - camerax,
                                               playerObj['y'] - cameray - getBounceAmount(playerObj['bounce'], BOUNCERATE, BOUNCEHEIGHT),
@@ -243,6 +255,7 @@ def runGame():
                     playerObj['facing'] = RIGHT
                 elif winMode and event.key == pygame.K_r:
                     return
+                
 
             elif event.type == pygame.KEYUP:
                 # stop moving the player's squirrel
@@ -284,6 +297,7 @@ def runGame():
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
                         # player is larger and eats the squirrel
                         playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
+                        # determines how much the player's squirrel grows each time they eat a smaller squirrel   MD
                         del squirrelObjs[i]
 
                         if playerObj['facing'] == LEFT:
@@ -301,7 +315,7 @@ def runGame():
                         playerObj['health'] -= 1
                         if playerObj['health'] == 0:
                             gameOverMode = True # turn on "game over mode"
-                            gameOverStartTime = time.time()
+                            gameOverStartTime = time.time()  
         else:
             # game is over, show "game over" text
             DISPLAYSURF.blit(gameOverSurf, gameOverRect)
@@ -315,6 +329,7 @@ def runGame():
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
+        # updates the display by defining the frames per second to previously set FPS = 30     MD
 
 
 
@@ -338,7 +353,7 @@ def getBounceAmount(currentBounce, bounceRate, bounceHeight):
     # currentBounce will always be less than bounceRate
     return int(math.sin( (math.pi / float(bounceRate)) * currentBounce ) * bounceHeight)
 
-def getRandomVelocity():
+def getRandomVelocity(): # randomized speed of antagonist squirrels   MD
     speed = random.randint(SQUIRRELMINSPEED, SQUIRRELMAXSPEED)
     if random.randint(0, 1) == 0:
         return speed
@@ -357,6 +372,8 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
         objRect = pygame.Rect(x, y, objWidth, objHeight)
         if not objRect.colliderect(cameraRect):
             return x, y
+    # function that defines the area in which new objects are randomly created   MD
+    # they are created in the active area but outside of the camera view   MD
 
 
 def makeNewSquirrel(camerax, cameray):
