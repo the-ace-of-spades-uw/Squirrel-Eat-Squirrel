@@ -2,22 +2,32 @@
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
-# ur mom
+# ***Team intials: Asa L (AL), Meridan D (MD) Sarina S (SS)), Hoyt S (HS)***
 
+
+# Importing differnt modules AL
 import random, sys, time, math, pygame,os
+# Import pygame locals into script namespace AL
 from pygame.locals import *
 
+<<<<<<< HEAD
 
+=======
+# describes the window in which the game will appear on the screen   MD
+>>>>>>> 2593a0104f69f102820a83821d3c7e80e77818fc
 FPS = 30 # frames per second to update the screen
 WINWIDTH = 640 # width of the program's window, in pixels
 WINHEIGHT = 480 # height in pixels
 HALF_WINWIDTH = int(WINWIDTH / 2)
 HALF_WINHEIGHT = int(WINHEIGHT / 2)
 
+# Differnt colours expressed as tuples of RGB values AL
 GRASSCOLOR = (24, 255, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
+
+#assignment of the variables that will be used later in the creation of game functions   MD
 CAMERASLACK = 90     # how far from the center the squirrel moves before moving the camera
 MOVERATE = 9         # how fast the player moves
 BOUNCERATE = 6       # how fast the player bounces (large is slower)
@@ -36,7 +46,7 @@ DIRCHANGEFREQ = 2    # % chance of direction change per frame
 LEFT = 'left'
 RIGHT = 'right'
 
-#Relative path system AL
+#Relative path system using os module AL
 game_folder = os.path.dirname(__file__)
 assets_folder = os.path.join(game_folder, "assets")
 
@@ -67,10 +77,21 @@ Grass data structure keys:
     'grassImage' - an integer that refers to the index of the pygame.Surface object in GRASSIMAGES used for this grass object
 """
 
-def main():
+
+def main():  #allows the runGame() function to be put into script at the end    MD
+    """
+    (None) -> None
+    Loads images and surfacs and runs the main game AL
+    """
+    
     global FPSCLOCK, DISPLAYSURF, BASICFONT, L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES
+<<<<<<< HEAD
      
     pygame.init()
+=======
+    
+    pygame.init() #intialize python modules AL
+>>>>>>> 2593a0104f69f102820a83821d3c7e80e77818fc
     FPSCLOCK = pygame.time.Clock()
     pygame.display.set_icon(pygame.image.load(os.path.join(assets_folder,'gameicon.png'))) #sets the icon in windows title bar SS
     DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT)) #sets durface size of display SS
@@ -85,8 +106,13 @@ def main():
         GRASSIMAGES.append(pygame.image.load(os.path.join(assets_folder,'grass%s.png' % i)))
 
     while True:
+<<<<<<< HEAD
         runGame() #starts game once setup is complete SS
 
+=======
+        runGame()
+        # loop that calls the game to run when main() is in the script   MD
+>>>>>>> 2593a0104f69f102820a83821d3c7e80e77818fc
 
 def runGame():
     # set up variables for the start of a new game
@@ -123,7 +149,12 @@ def runGame():
                  'y': HALF_WINHEIGHT,
                  'bounce':0,
                  'health': MAXHEALTH}
+<<<<<<< HEAD
 # keep track of what keys are being held pressed by user SS
+=======
+
+    # allows for certain actions to happen when assigned to keys later on   MD
+>>>>>>> 2593a0104f69f102820a83821d3c7e80e77818fc
     moveLeft  = False
     moveRight = False
     moveUp    = False
@@ -140,11 +171,13 @@ def runGame():
         if invulnerableMode and time.time() - invulnerableStartTime > INVULNTIME:
             invulnerableMode = False
 
-        # move all the squirrels
+        # move all the enemy squirrels
+        # could reduce the bounce by decreasing BOUNCERATE to have levitating, ghost squrrels   MD
         for sObj in squirrelObjs:
             # move the squirrel, and adjust for their bounce
             sObj['x'] += sObj['movex']
             sObj['y'] += sObj['movey']
+            # adjust movement increments to make ultra fast vampire squirrels   MD
             sObj['bounce'] += 1
             if sObj['bounce'] > sObj['bouncerate']:
                 sObj['bounce'] = 0 # reset bounce amount
@@ -168,20 +201,27 @@ def runGame():
                 del squirrelObjs[i]
 
         # add more grass & squirrels if we don't have enough.
+        # could adjust NUMGRASS to make a dense grass mode   MD
         while len(grassObjs) < NUMGRASS:
             grassObjs.append(makeNewGrass(camerax, cameray))
         while len(squirrelObjs) < NUMSQUIRRELS:
             squirrelObjs.append(makeNewSquirrel(camerax, cameray))
 
-        # adjust camerax and cameray if beyond the "camera slack"
+        # Find the distance between game world coordinates of the centre of the camera
+        # and the game world codinates of the center of player, if this value is greater than cameraslack
+        # move the camera a fixed distacne from the players center AL
         playerCenterx = playerObj['x'] + int(playerObj['size'] / 2)
         playerCentery = playerObj['y'] + int(playerObj['size'] / 2)
+        # move camera left AL
         if (camerax + HALF_WINWIDTH) - playerCenterx > CAMERASLACK:
             camerax = playerCenterx + CAMERASLACK - HALF_WINWIDTH
+        # move camera right AL
         elif playerCenterx - (camerax + HALF_WINWIDTH) > CAMERASLACK:
             camerax = playerCenterx - CAMERASLACK - HALF_WINWIDTH
+        # move camera up AL
         if (cameray + HALF_WINHEIGHT) - playerCentery > CAMERASLACK:
             cameray = playerCentery + CAMERASLACK - HALF_WINHEIGHT
+        # move camera down AL
         elif playerCentery - (cameray + HALF_WINHEIGHT) > CAMERASLACK:
             cameray = playerCentery - CAMERASLACK - HALF_WINHEIGHT
 
@@ -208,6 +248,7 @@ def runGame():
 
         # draw the player squirrel
         flashIsOn = round(time.time(), 1) * 10 % 2 == 1
+        # when player runs into enemy squirrel, they flash momentarily. this function creates the flashing effect   MD
         if not gameOverMode and not (invulnerableMode and flashIsOn):
             playerObj['rect'] = pygame.Rect( (playerObj['x'] - camerax,
                                               playerObj['y'] - cameray - getBounceAmount(playerObj['bounce'], BOUNCERATE, BOUNCEHEIGHT),
@@ -219,32 +260,35 @@ def runGame():
         # draw the health meter
         drawHealthMeter(playerObj['health'])
 
-        for event in pygame.event.get(): # event handling loop
+        for event in pygame.event.get(): # event handling loop, if user exits the windown terminate program AL
             if event.type == pygame.QUIT:
                 terminate()
 
+            # Handle key down (pressing key) events AL
             elif event.type == pygame.KEYDOWN:
-                if event.key in (pygame.K_UP, pygame.K_w):
+                if event.key in (pygame.K_UP, pygame.K_w): #Either the up arrow key or (W) key can be used to move up AL
                     moveDown = False
                     moveUp = True
-                elif event.key in (pygame.K_DOWN, pygame.K_s):
+                elif event.key in (pygame.K_DOWN, pygame.K_s): #Either the down arrow key or (S) key can be used to move down AL
                     moveUp = False
                     moveDown = True
-                elif event.key in (pygame.K_LEFT, pygame.K_a):
+                elif event.key in (pygame.K_LEFT, pygame.K_a): #Either the left arrow key or (A) key can be used to move left AL
                     moveRight = False
                     moveLeft = True
-                    if playerObj['facing'] != LEFT: # change player image
+                    if playerObj['facing'] != LEFT: # change the player image such that the sprite is facing left AL
                         playerObj['surface'] = pygame.transform.scale(L_SQUIR_IMG, (playerObj['size'], playerObj['size']))
                     playerObj['facing'] = LEFT
-                elif event.key in (pygame.K_RIGHT, pygame.K_d):
+                elif event.key in (pygame.K_RIGHT, pygame.K_d): #Either the right arrow key or (D) key can be used to move right AL
                     moveLeft = False
                     moveRight = True
-                    if playerObj['facing'] != RIGHT: # change player image
+                    if playerObj['facing'] != RIGHT: # change player image such that the sprite is right AL
                         playerObj['surface'] = pygame.transform.scale(R_SQUIR_IMG, (playerObj['size'], playerObj['size']))
                     playerObj['facing'] = RIGHT
-                elif winMode and event.key == pygame.K_r:
+                elif winMode and event.key == pygame.K_r: 
                     return
 
+            
+            # Handle key up events (i.e if the user stops pressing a movement key stop moving the player) AL
             elif event.type == pygame.KEYUP:
                 # stop moving the player's squirrel
                 if event.key in (pygame.K_LEFT, pygame.K_a):
@@ -256,8 +300,13 @@ def runGame():
                 elif event.key in (pygame.K_DOWN, pygame.K_s):
                     moveDown = False
 
+<<<<<<< HEAD
                 elif event.key == pygame.K_ESCAPE:
                     terminate() # terminates the game if esc is pressed SS
+=======
+                elif event.key == pygame.K_ESCAPE: #Escape key can be used to quit program AL
+                    terminate()
+>>>>>>> 2593a0104f69f102820a83821d3c7e80e77818fc
 
         if not gameOverMode:
             # actually move the player
@@ -280,11 +329,13 @@ def runGame():
             for i in range(len(squirrelObjs)-1, -1, -1):
                 sqObj = squirrelObjs[i]
                 if 'rect' in sqObj and playerObj['rect'].colliderect(sqObj['rect']):
-                    # a player/squirrel collision has occurred
+                    # a player/squirrel collision has occurred using pygames rect module to check AL
 
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
                         # player is larger and eats the squirrel
                         playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
+                        # determines how much the player's squirrel grows each time they eat a smaller squirrel   MD
+
                         del squirrelObjs[i]
 
                         if playerObj['facing'] == LEFT:
@@ -302,7 +353,7 @@ def runGame():
                         playerObj['health'] -= 1
                         if playerObj['health'] == 0:
                             gameOverMode = True # turn on "game over mode"
-                            gameOverStartTime = time.time()
+                            gameOverStartTime = time.time()  
         else:
             # game is over, show "game over" text
             DISPLAYSURF.blit(gameOverSurf, gameOverRect)
@@ -316,6 +367,7 @@ def runGame():
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
+        # updates the display by defining the frames per second to previously set FPS = 30     MD
 
 
 
@@ -328,6 +380,10 @@ def drawHealthMeter(currentHealth):
 
 
 def terminate():
+    """
+    (None) -> None
+    Properly terminate program 
+    """
     pygame.quit()
     sys.exit()
 
@@ -339,8 +395,12 @@ def getBounceAmount(currentBounce, bounceRate, bounceHeight):
     # currentBounce will always be less than bounceRate
     return int(math.sin( (math.pi / float(bounceRate)) * currentBounce ) * bounceHeight)
 
+<<<<<<< HEAD
 # random speed for new squirrels being formed SS
 def getRandomVelocity():
+=======
+def getRandomVelocity(): # randomized speed of antagonist squirrels   MD
+>>>>>>> 2593a0104f69f102820a83821d3c7e80e77818fc
     speed = random.randint(SQUIRRELMINSPEED, SQUIRRELMAXSPEED)
     if random.randint(0, 1) == 0:
         return speed
@@ -360,6 +420,8 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
         objRect = pygame.Rect(x, y, objWidth, objHeight)
         if not objRect.colliderect(cameraRect):
             return x, y
+    # function that defines the area in which new objects are randomly created   MD
+    # they are created in the active area but outside of the camera view   MD
 
 # creates new enemy squirrels  of different sizes with placement, speed and direction determined randomly SS
 def makeNewSquirrel(camerax, cameray):
@@ -401,5 +463,6 @@ def isOutsideActiveArea(camerax, cameray, obj):
     return not boundsRect.colliderect(objRect)
 
 
+# script behaviour of program AL
 if __name__ == '__main__':
     main()
