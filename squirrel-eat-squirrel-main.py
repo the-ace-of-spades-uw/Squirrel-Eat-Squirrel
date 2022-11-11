@@ -7,6 +7,7 @@
 import random, sys, time, math, pygame,os
 from pygame.locals import *
 
+
 FPS = 30 # frames per second to update the screen
 WINWIDTH = 640 # width of the program's window, in pixels
 WINHEIGHT = 480 # height in pixels
@@ -68,23 +69,23 @@ Grass data structure keys:
 
 def main():
     global FPSCLOCK, DISPLAYSURF, BASICFONT, L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES
-    
+     
     pygame.init()
     FPSCLOCK = pygame.time.Clock()
-    pygame.display.set_icon(pygame.image.load(os.path.join(assets_folder,'gameicon.png')))
-    DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT))
-    pygame.display.set_caption('Squirrel Eat Squirrel')
-    BASICFONT = pygame.font.Font('freesansbold.ttf', 32)
+    pygame.display.set_icon(pygame.image.load(os.path.join(assets_folder,'gameicon.png'))) #sets the icon in windows title bar SS
+    DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT)) #sets durface size of display SS
+    pygame.display.set_caption('Squirrel Eat Squirrel') # sets caption text in title bar SS
+    BASICFONT = pygame.font.Font()('freesansbold.ttf', 32) # sets new font object from file SS
 
     # load the image files
-    L_SQUIR_IMG = pygame.image.load(os.path.join(assets_folder,'squirrel.png'))
+    L_SQUIR_IMG = pygame.image.load(os.path.join(assets_folder,'squirrel.png')) # loads squirrel and enemy squirrel into code SS
     R_SQUIR_IMG = pygame.transform.flip(L_SQUIR_IMG, True, False)
     GRASSIMAGES = []
     for i in range(1, 5):
         GRASSIMAGES.append(pygame.image.load(os.path.join(assets_folder,'grass%s.png' % i)))
 
     while True:
-        runGame()
+        runGame() #starts game once setup is complete SS
 
 
 def runGame():
@@ -96,7 +97,7 @@ def runGame():
     winMode = False           # if the player has won
 
     # create the surfaces to hold game text
-    gameOverSurf = BASICFONT.render('Game Over', True, WHITE)
+    gameOverSurf = BASICFONT.render('Game Over', True, WHITE) 
     gameOverRect = gameOverSurf.get_rect()
     gameOverRect.center = (HALF_WINWIDTH, HALF_WINHEIGHT)
 
@@ -122,7 +123,7 @@ def runGame():
                  'y': HALF_WINHEIGHT,
                  'bounce':0,
                  'health': MAXHEALTH}
-
+# keep track of what keys are being held pressed by user SS
     moveLeft  = False
     moveRight = False
     moveUp    = False
@@ -185,7 +186,7 @@ def runGame():
             cameray = playerCentery - CAMERASLACK - HALF_WINHEIGHT
 
         # draw the green background
-        DISPLAYSURF.fill(GRASSCOLOR)
+        DISPLAYSURF.fill(GRASSCOLOR) 
 
         # draw all the grass objects on the screen
         for gObj in grassObjs:
@@ -212,7 +213,7 @@ def runGame():
                                               playerObj['y'] - cameray - getBounceAmount(playerObj['bounce'], BOUNCERATE, BOUNCEHEIGHT),
                                               playerObj['size'],
                                               playerObj['size']) )
-            DISPLAYSURF.blit(playerObj['surface'], playerObj['rect'])
+            DISPLAYSURF.blit(playerObj['surface'], playerObj['rect']) # could we change the graphics around the squirrel? SS
 
 
         # draw the health meter
@@ -256,7 +257,7 @@ def runGame():
                     moveDown = False
 
                 elif event.key == pygame.K_ESCAPE:
-                    terminate()
+                    terminate() # terminates the game if esc is pressed SS
 
         if not gameOverMode:
             # actually move the player
@@ -338,6 +339,7 @@ def getBounceAmount(currentBounce, bounceRate, bounceHeight):
     # currentBounce will always be less than bounceRate
     return int(math.sin( (math.pi / float(bounceRate)) * currentBounce ) * bounceHeight)
 
+# random speed for new squirrels being formed SS
 def getRandomVelocity():
     speed = random.randint(SQUIRRELMINSPEED, SQUIRRELMAXSPEED)
     if random.randint(0, 1) == 0:
@@ -346,6 +348,7 @@ def getRandomVelocity():
         return -speed
 
 
+# random position for new squirrels must be out of camera site but in the active area SS
 def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
     # create a Rect of the camera view
     cameraRect = pygame.Rect(camerax, cameray, WINWIDTH, WINHEIGHT)
@@ -358,7 +361,7 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
         if not objRect.colliderect(cameraRect):
             return x, y
 
-
+# creates new enemy squirrels  of different sizes with placement, speed and direction determined randomly SS
 def makeNewSquirrel(camerax, cameray):
     sq = {}
     generalSize = random.randint(5, 25)
