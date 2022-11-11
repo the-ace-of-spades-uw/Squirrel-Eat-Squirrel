@@ -122,6 +122,7 @@ def runGame():
     grassObjs = []    # stores all the grass objects in the game
     squirrelObjs = [] # stores all the non-player squirrel objects
     # stores the player object:
+    # Can use key value pair to represent differnt types of squirrels AL
     playerObj = {'surface': pygame.transform.scale(L_SQUIR_IMG, (STARTSIZE, STARTSIZE)),
                  'facing': LEFT,
                  'size': STARTSIZE,
@@ -335,7 +336,7 @@ def runGame():
 
 
 def drawHealthMeter(currentHealth):
-    for i in range(currentHealth): # draw red health bars
+    for i in range(currentHealth): # draw red health bars, need to find a way to increase maxhealth but not above a limit AL
         pygame.draw.rect(DISPLAYSURF, RED,   (15, 5 + (10 * MAXHEALTH) - i * 10, 20, 10))
     for i in range(MAXHEALTH): # draw the white outlines
         pygame.draw.rect(DISPLAYSURF, WHITE, (15, 5 + (10 * MAXHEALTH) - i * 10, 20, 10), 1)
@@ -355,11 +356,12 @@ def getBounceAmount(currentBounce, bounceRate, bounceHeight):
     # Larger bounceRate means a slower bounce.
     # Larger bounceHeight means a higher bounce.
     # currentBounce will always be less than bounceRate
+    # Bounce height scales how high the player jumps, could use for powerups AL
     return int(math.sin( (math.pi / float(bounceRate)) * currentBounce ) * bounceHeight)
 
 def getRandomVelocity():
-    speed = random.randint(SQUIRRELMINSPEED, SQUIRRELMAXSPEED)
-    if random.randint(0, 1) == 0:
+    speed = random.randint(SQUIRRELMINSPEED, SQUIRRELMAXSPEED) #get a random integer speed between the min and the max AL
+    if random.randint(0, 1) == 0: # basically 50% odds per function call for the speed to be appllied in one direction or the opposite AL
         return speed
     else:
         return -speed
@@ -379,6 +381,10 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
 
 
 def makeNewSquirrel(camerax, cameray):
+    """
+    (int,int) -> dict
+    Create a new squirrel "object"
+    """
     sq = {}
     generalSize = random.randint(5, 25)
     multiplier = random.randint(1, 3)
@@ -398,6 +404,10 @@ def makeNewSquirrel(camerax, cameray):
 
 
 def makeNewGrass(camerax, cameray):
+    """
+    (int,int) -> dict
+    Create a new grass "object"
+    """
     gr = {}
     gr['grassImage'] = random.randint(0, len(GRASSIMAGES) - 1)
     gr['width']  = GRASSIMAGES[0].get_width()
