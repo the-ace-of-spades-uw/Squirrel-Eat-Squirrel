@@ -84,13 +84,13 @@ def main():  #allows the runGame() function to be put into script at the end    
     
     pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
-    pygame.display.set_icon(pygame.image.load(os.path.join(assets_folder,'gameicon.png')))
-    DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT))
-    pygame.display.set_caption('Squirrel Eat Squirrel')
-    BASICFONT = pygame.font.Font('freesansbold.ttf', 32)
+    pygame.display.set_icon(pygame.image.load(os.path.join(assets_folder,'gameicon.png'))) #sets the icon in windows title bar SS
+    DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT)) #sets durface size of display SS
+    pygame.display.set_caption('Squirrel Eat Squirrel') # sets caption text in title bar SS
+    BASICFONT = pygame.font.Font('freesansbold.ttf', 32) # sets new font object from file SS
 
     # load the image files
-    L_SQUIR_IMG = pygame.image.load(os.path.join(assets_folder,'squirrel.png'))
+    L_SQUIR_IMG = pygame.image.load(os.path.join(assets_folder,'squirrel.png')) # loads squirrel and enemy squirrel into code SS
     R_SQUIR_IMG = pygame.transform.flip(L_SQUIR_IMG, True, False)
     GRASSIMAGES = []
     for i in range(1, 5):
@@ -99,6 +99,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     while True:
         runGame()
         # loop that calls the game to run when main() is in the script   MD
+        # starts game once setup is complete SS
 
 def runGame():
     # set up variables for the start of a new game
@@ -109,7 +110,7 @@ def runGame():
     winMode = False           # if the player has won
 
     # create the surfaces to hold game text
-    gameOverSurf = BASICFONT.render('Game Over', True, WHITE)
+    gameOverSurf = BASICFONT.render('Game Over', True, WHITE) 
     gameOverRect = gameOverSurf.get_rect()
     gameOverRect.center = (HALF_WINWIDTH, HALF_WINHEIGHT)
 
@@ -136,7 +137,7 @@ def runGame():
                  'y': HALF_WINHEIGHT,
                  'bounce':0,
                  'health': MAXHEALTH}
-
+    # keep track of what keys are being held pressed by user SS
     # allows for certain actions to happen when assigned to keys later on   MD
     moveLeft  = False
     moveRight = False
@@ -209,7 +210,7 @@ def runGame():
             cameray = playerCentery - CAMERASLACK - HALF_WINHEIGHT
 
         # draw the green background
-        DISPLAYSURF.fill(GRASSCOLOR)
+        DISPLAYSURF.fill(GRASSCOLOR) 
 
         # draw all the grass objects on the screen
         for gObj in grassObjs:
@@ -237,7 +238,7 @@ def runGame():
                                               playerObj['y'] - cameray - getBounceAmount(playerObj['bounce'], BOUNCERATE, BOUNCEHEIGHT),
                                               playerObj['size'],
                                               playerObj['size']) )
-            DISPLAYSURF.blit(playerObj['surface'], playerObj['rect'])
+            DISPLAYSURF.blit(playerObj['surface'], playerObj['rect']) # could we change the graphics around the squirrel? SS
 
 
         # draw the health meter
@@ -282,9 +283,8 @@ def runGame():
                     moveUp = False
                 elif event.key in (pygame.K_DOWN, pygame.K_s):
                     moveDown = False
-
-                elif event.key == pygame.K_ESCAPE: #Escape key can be used to quit program AL
-                    terminate()
+                elif event.key == pygame.K_ESCAPE: #Escape key can be used to quit program AL 
+                    terminate()                    # terminates the game if esc is pressed SS
 
         if not gameOverMode:
             # actually move the player
@@ -382,6 +382,7 @@ def getRandomVelocity(): # randomized speed of antagonist squirrels   MD
         return -speed
 
 
+# random position for new squirrels must be out of camera site but in the active area SS
 def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
     # create a Rect of the camera view
     cameraRect = pygame.Rect(camerax, cameray, WINWIDTH, WINHEIGHT)
@@ -396,7 +397,7 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
     # function that defines the area in which new objects are randomly created   MD
     # they are created in the active area but outside of the camera view   MD
 
-
+# creates new enemy squirrels  of different sizes with placement, speed and direction determined randomly SS
 def makeNewSquirrel(camerax, cameray):
     """
     (int,int) -> dict
