@@ -45,7 +45,7 @@ RIGHT = 'right'
 #Relative path system using os module AL
 game_folder = os.path.dirname(__file__)
 assets_folder = os.path.join(game_folder, "assets")
-
+sound_folder = os.path.join(game_folder,"sounds")
 
 """
 This program has three data structures to represent the player, enemy squirrels, and grass background objects. The data structures are dictionaries with the following keys:
@@ -89,6 +89,14 @@ def main():  #allows the runGame() function to be put into script at the end    
     pygame.display.set_caption('Squirrel Eat Squirrel') # sets caption text in title bar SS
     BASICFONT = pygame.font.Font('freesansbold.ttf', 32) # sets new font object from file SS
 
+    randomMusicInt = random.randint(0,100) #randomly select background music based on weighted average AL
+    if 0 <= randomMusicInt < 45:
+        BACKGROUNDMUSIC = pygame.mixer.music.load(os.path.join(sound_folder,'backgroundmusic1.mp3'))
+    if 45 <= randomMusicInt < 90:
+        BACKGROUNDMUSIC = pygame.mixer.music.load(os.path.join(sound_folder,'backgroundmusic2.mp3'))
+    if 90 <= randomMusicInt <= 100:
+        BACKGROUNDMUSIC = pygame.mixer.music.load(os.path.join(sound_folder,'backgroundmusic3.mp3'))
+
     # load the image files
     L_SQUIR_IMG = pygame.image.load(os.path.join(assets_folder,'squirrel.png')) # loads squirrel and enemy squirrel into code SS
     R_SQUIR_IMG = pygame.transform.flip(L_SQUIR_IMG, True, False)
@@ -102,6 +110,9 @@ def main():  #allows the runGame() function to be put into script at the end    
         # starts game once setup is complete SS
 
 def runGame():
+
+    pygame.mixer.music.rewind() #rewind the music before each newgame AL
+    pygame.mixer.music.play(loops=-1) #play music and keep looping it AL
     # set up variables for the start of a new game
     invulnerableMode = False  # if the player is invulnerable
     invulnerableStartTime = 0 # time the player became invulnerable
@@ -335,6 +346,7 @@ def runGame():
         else:
             # game is over, show "game over" text
             DISPLAYSURF.blit(gameOverSurf, gameOverRect)
+            pygame.mixer.music.fadeout(int(time.time() - gameOverStartTime)) #fade out the music over aprox the time it take to start a new game AL
             if time.time() - gameOverStartTime > GAMEOVERTIME:
                 return # end the current game
 
