@@ -80,14 +80,14 @@ def main():  #allows the runGame() function to be put into script at the end    
     Loads images, surfacs, sounds and runs the main game AL
     """
     
-    global FPSCLOCK, DISPLAYSURF, BASICFONT, L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES, BOUNCESOUND
+    global FPSCLOCK, DISPLAYSURF, BASICFONT, L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES, BOUNCESOUND, bestTime
     
     pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
     pygame.display.set_icon(pygame.image.load(os.path.join(assets_folder,'gameicon.png'))) #sets the icon in windows title bar SS
     DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT)) #sets durface size of display SS
     pygame.display.set_caption('Squirrel Eat Squirrel') # sets caption text in title bar SS
-    BASICFONT = pygame.font.Font('freesansbold.ttf', 32) # sets new font object from file SS
+    BASICFONT = pygame.font.Font(os.path.join(assets_folder, "gamefont.ttf"), 32) # sets new font object from file SS, changed font on game AL
     
     #load sound related items AL
     randomMusicInt = random.randint(0,100) #randomly select background music based on weighted average AL
@@ -98,9 +98,13 @@ def main():  #allows the runGame() function to be put into script at the end    
     elif 90 <= randomMusicInt <= 100:
         BACKGROUNDMUSIC = pygame.mixer.music.load(os.path.join(sound_folder,'backgroundmusic3.mp3'))
 
-    #load sound effects
+    #load sound effects AL
     BOUNCESOUND = pygame.mixer.Sound(os.path.join(sound_folder,'bouncesound.ogg')) #make sure to load sound effects as ogg AL
     BOUNCESOUND.set_volume(0.5)
+
+    #Determine best time from file AL
+    bestTime = float(readFromFile("besttime.txt"))
+
     # load the image files
     L_SQUIR_IMG = pygame.image.load(os.path.join(assets_folder,'squirrel.png')) # loads squirrel and enemy squirrel into code SS
     R_SQUIR_IMG = pygame.transform.flip(L_SQUIR_IMG, True, False)
@@ -115,7 +119,7 @@ def main():  #allows the runGame() function to be put into script at the end    
 
 def runGame():
 
-    gameStartTime = time.time()
+    
     pygame.mixer.music.rewind() #rewind the music before each newgame AL
     pygame.mixer.music.play(loops=-1) #play music and keep looping it AL
     # set up variables for the start of a new game
@@ -124,6 +128,9 @@ def runGame():
     gameOverMode = False      # if the player has lost
     gameOverStartTime = 0     # time the player lost
     winMode = False           # if the player has won
+    newBestMode = False       # if the player has beaten the previous best time AL
+
+    gameStartTime = time.time() # record the start of a game relative to epoch AL
 
     # create the surfaces to hold game text
     gameOverSurf = BASICFONT.render('Game Over', True, WHITE) 
@@ -225,6 +232,7 @@ def runGame():
         elif playerCentery - (cameray + HALF_WINHEIGHT) > CAMERASLACK:
             cameray = playerCentery - CAMERASLACK - HALF_WINHEIGHT
 
+        #******** DRAWING AL **********
         # draw the green background
         DISPLAYSURF.fill(GRASSCOLOR) 
 
@@ -259,6 +267,9 @@ def runGame():
 
         # draw the health meter
         drawHealthMeter(playerObj['health'])
+
+        # draw best time text
+        
 
         for event in pygame.event.get(): # event handling loop, if user exits the windown terminate program AL
             if event.type == pygame.QUIT:
@@ -345,8 +356,16 @@ def runGame():
                             playerObj['surface'] = pygame.transform.scale(R_SQUIR_IMG, (playerObj['size'], playerObj['size']))
 
                         if playerObj['size'] > WINSIZE:
-                            gameCompletionTime = time.time() - gameStartTime
                             winMode = True # turn on "win mode"
+
+                            global bestTime
+                            gameCompletionTime = time.time() - gameStartTime #the time it took to win relative to the start of that game AL
+                            if gameCompletionTime < bestTime or bestTime == 0: # Check if current time is better than previous best AL
+                                timeToSave = round((gameCompletionTime/60), 2) # prepare new best timn for saving saved in mins AL
+                                bestTime = timeToSave # store the new bes time AL
+                                writeToFile("besttime.txt", str(timeToSave)) #Save the time to file AL
+                                newBestMode = True
+                            
 
                     elif not invulnerableMode:
                         # player is smaller and takes damage
