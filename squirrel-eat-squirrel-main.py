@@ -21,7 +21,7 @@ HALF_WINHEIGHT = int(WINHEIGHT / 2)
 GRASSCOLOR = (24, 255, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
-
+GOLD = (212,175,55) 
 
 #assignment of the variables that will be used later in the creation of game functions   MD
 CAMERASLACK = 90     # how far from the center the squirrel moves before moving the camera
@@ -80,7 +80,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     Loads images, surfacs, sounds and runs the main game AL
     """
     
-    global FPSCLOCK, DISPLAYSURF, BASICFONT, L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES, BOUNCESOUND, bestTime
+    global FPSCLOCK, DISPLAYSURF, BASICFONT, SMALLFONT, MEDIUMFONT,L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES, BOUNCESOUND, bestTime
     
     pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
@@ -88,7 +88,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     DISPLAYSURF = pygame.display.set_mode((WINWIDTH, WINHEIGHT)) #sets durface size of display SS
     pygame.display.set_caption('Squirrel Eat Squirrel') # sets caption text in title bar SS
     BASICFONT = pygame.font.Font(os.path.join(assets_folder, "gamefont.ttf"), 32) # sets new font object from file SS, changed font on game AL
-    
+    SMALLFONT = pygame.font.Font(os.path.join(assets_folder, "gamefont.ttf"), 12) # for smaller applications AL
     #load sound related items AL
     randomMusicInt = random.randint(0,100) #randomly select background music based on weighted average AL
     if 0 <= randomMusicInt < 45:
@@ -118,7 +118,7 @@ def main():  #allows the runGame() function to be put into script at the end    
         # starts game once setup is complete SS
 
 def runGame():
-
+    global bestTime
     
     pygame.mixer.music.rewind() #rewind the music before each newgame AL
     pygame.mixer.music.play(loops=-1) #play music and keep looping it AL
@@ -137,13 +137,18 @@ def runGame():
     gameOverRect = gameOverSurf.get_rect()
     gameOverRect.center = (HALF_WINWIDTH, HALF_WINHEIGHT)
 
-    winSurf = BASICFONT.render('You have achieved OMEGA SQUIRREL!', True, WHITE)
+    winSurf = SMALLFONT.render('You have achieved OMEGA SQUIRREL!', True, WHITE)
     winRect = winSurf.get_rect()
     winRect.center = (HALF_WINWIDTH, HALF_WINHEIGHT)
 
-    winSurf2 = BASICFONT.render('(Press "r" to restart.)', True, WHITE)
+    winSurf2 = SMALLFONT.render('(Press "r" to restart.)', True, WHITE)
     winRect2 = winSurf2.get_rect()
     winRect2.center = (HALF_WINWIDTH, HALF_WINHEIGHT + 30)
+
+    #Best time text AL
+    bestTimeSurf = SMALLFONT.render(("Best Time: " + str(bestTime) + " min"), True, WHITE)
+    bestTimeRect = bestTimeSurf.get_rect()
+    bestTimeRect.topright = (WINWIDTH - 10, 20) # Near the top left corner of screen AL
 
     # camerax and cameray are the top left of where the camera view is
     camerax = 0
@@ -268,6 +273,8 @@ def runGame():
         # draw the health meter
         drawHealthMeter(playerObj['health'])
 
+        DISPLAYSURF.blit(bestTimeSurf,bestTimeRect) #Display highscore text to screen AL
+
         # draw best time text
         
 
@@ -358,13 +365,13 @@ def runGame():
                         if playerObj['size'] > WINSIZE:
                             winMode = True # turn on "win mode"
 
-                            global bestTime
+                            
                             gameCompletionTime = time.time() - gameStartTime #the time it took to win relative to the start of that game AL
                             if gameCompletionTime < bestTime or bestTime == 0: # Check if current time is better than previous best AL
                                 timeToSave = round((gameCompletionTime/60), 2) # prepare new best timn for saving saved in mins AL
                                 bestTime = timeToSave # store the new bes time AL
                                 writeToFile("besttime.txt", str(timeToSave)) #Save the time to file AL
-                                newBestMode = True
+                                newBestMode = True #turn on the "new best mode" AL
                             
 
                     elif not invulnerableMode:
@@ -386,6 +393,19 @@ def runGame():
         if winMode:
             DISPLAYSURF.blit(winSurf, winRect)
             DISPLAYSURF.blit(winSurf2, winRect2)
+        
+        #check if player has set a new best time
+        if newBestMode:
+            newBestTimeSurf = BASICFONT.render('NEW BEST TIME !!!', True, WHITE)
+            newBestTimeRect = newBestTimeSurf.get_rect()
+            newBestTimeRect.center = (HALF_WINWIDTH, HALF_WINHEIGHT - 80)
+
+            newBestTimeSurf2 = SMALLFONT.render("new best: " + str(bestTime), True, WHITE)
+            newBestTimeRect2 = newBestTimeSurf2.get_rect()
+            newBestTimeRect2.center = (HALF_WINWIDTH, HALF_WINHEIGHT - 40)
+
+            DISPLAYSURF.blit(newBestTimeSurf,newBestTimeRect)   
+            DISPLAYSURF.blit(newBestTimeSurf2, newBestTimeRect2)
 
         pygame.display.update()
         FPSCLOCK.tick(FPS)
