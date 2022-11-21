@@ -195,15 +195,6 @@ def runGame():
             sObj['bounce'] += 1
             if sObj['bounce'] > sObj['bouncerate']:
                 sObj['bounce'] = 0 # reset bounce amount
-            #Summons unique enemy squirrels    
-            if random.randint(0,100) < 25:
-                drunkSquirrel() 
-            elif 25 < random.randint(0,100) < 50:
-                vampireSquirrel()
-            elif 50 < random.randint(0,100) < 75:
-                chernobylSquirrel()
-            elif random.randint(0,100) > 75:
-                ghostSquirrel()
 
             # random chance they change direction
             if random.randint(0, 99) < DIRCHANGEFREQ:
@@ -228,7 +219,23 @@ def runGame():
         while len(grassObjs) < NUMGRASS:
             grassObjs.append(makeNewGrass(camerax, cameray))
         while len(squirrelObjs) < NUMSQUIRRELS:
-            squirrelObjs.append(makeNewSquirrel(camerax, cameray))
+            # pick random enemy squirrel to be spawned AL
+            random_sqr_int = random.randint(0,100)
+            if 0 <= random_sqr_int <= 40:
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+            elif 40 < random_sqr_int <= 50:
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+            elif 50 < random_sqr_int <= 60:
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+            elif 60 < random_sqr_int <= 70:
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+            elif 70 < random_sqr_int <= 80:
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+            elif 80 < random_sqr_int <= 90:
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+            else:
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+
 
         # Find the distance between game world coordinates of the centre of the camera
         # and the game world codinates of the center of player, if this value is greater than cameraslack
@@ -494,7 +501,8 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
     # they are created in the active area but outside of the camera view   MD
 
 # creates new enemy squirrels  of different sizes with placement, speed and direction determined randomly SS
-def makeNewSquirrel(camerax, cameray):
+# Added new parameters for different enemy squirrels AL
+def makeNewSquirrel(camerax, cameray, leftSquirImg, rightSquirImg, sqrID):
     """
     (int,int) -> dict
     Create a new squirrel "object"
@@ -508,12 +516,13 @@ def makeNewSquirrel(camerax, cameray):
     sq['movex'] = getRandomVelocity()
     sq['movey'] = getRandomVelocity()
     if sq['movex'] < 0: # squirrel is facing left
-        sq['surface'] = pygame.transform.scale(L_SQUIR_IMG, (sq['width'], sq['height']))
+        sq['surface'] = pygame.transform.scale(leftSquirImg, (sq['width'], sq['height']))
     else: # squirrel is facing right
-        sq['surface'] = pygame.transform.scale(R_SQUIR_IMG, (sq['width'], sq['height']))
+        sq['surface'] = pygame.transform.scale(rightSquirImg, (sq['width'], sq['height']))
     sq['bounce'] = 0
     sq['bouncerate'] = random.randint(10, 18)
     sq['bounceheight'] = random.randint(10, 50)
+    sq['id'] = sqrID
     return sq
 
 
