@@ -195,6 +195,15 @@ def runGame():
             sObj['bounce'] += 1
             if sObj['bounce'] > sObj['bouncerate']:
                 sObj['bounce'] = 0 # reset bounce amount
+            #Summons unique enemy squirrels    
+            if random.randint(0,100) < 25:
+                drunkSquirrel() 
+            elif 25 < random.randint(0,100) < 50:
+                vampireSquirrel()
+            elif 50 < random.randint(0,100) < 75:
+                chernobylSquirrel()
+            elif random.randint(0,100) > 75:
+                ghostSquirrel()
 
             # random chance they change direction
             if random.randint(0, 99) < DIRCHANGEFREQ:
@@ -427,7 +436,22 @@ def drawHealthMeter(currentHealth):
         pygame.draw.rect(DISPLAYSURF, RED,   (15, 5 + (10 * MAXHEALTH) - i * 10, 20, 10))
     for i in range(MAXHEALTH): # draw the white outlines
         pygame.draw.rect(DISPLAYSURF, WHITE, (15, 5 + (10 * MAXHEALTH) - i * 10, 20, 10), 1)
+        
+def drunkSquirrel():
+    None
+    #Actions for drunk Squirrel
 
+def vampireSquirrel():
+    None
+    #Actions for vampire Squirrel
+
+def chernobylSquirrel():
+    None
+    #Actions for chernobyl Squirrel
+
+def ghostSquirrel():
+    None
+    #Actions for ghost Squirrel
 
 def terminate():
     """
