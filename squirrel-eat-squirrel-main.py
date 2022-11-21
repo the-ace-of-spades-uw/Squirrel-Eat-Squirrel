@@ -103,7 +103,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     BOUNCESOUND.set_volume(0.5)
 
     #Determine best time from file AL
-    bestTime = float(readFromFile("besttime.txt"))
+    bestTime = int(readFromFile("besttime.txt"))
 
     # load the image files
     L_SQUIR_IMG = pygame.image.load(os.path.join(assets_folder,'squirrel.png')) # loads squirrel and enemy squirrel into code SS
@@ -146,7 +146,9 @@ def runGame():
     winRect2.center = (HALF_WINWIDTH, HALF_WINHEIGHT + 30)
 
     #Best time text AL
-    bestTimeSurf = SMALLFONT.render(("Best Time: " + str(bestTime) + " min"), True, WHITE)
+    bestTimeMins = bestTime // 60 # formal best time in terms of mins and seconds, assuming user won't take over an hour to complete the game AL
+    bestTimeSecs = bestTime - (bestTimeMins * 60)
+    bestTimeSurf = SMALLFONT.render(("Best Time: " + str(bestTimeMins) + ":" + str(bestTimeSecs) ), True, WHITE)
     bestTimeRect = bestTimeSurf.get_rect()
     bestTimeRect.topright = (WINWIDTH - 10, 20) # Near the top left corner of screen AL
 
@@ -273,10 +275,14 @@ def runGame():
         # draw the health meter
         drawHealthMeter(playerObj['health'])
 
-        DISPLAYSURF.blit(bestTimeSurf,bestTimeRect) #Display highscore text to screen AL
+        DISPLAYSURF.blit(bestTimeSurf,bestTimeRect) #Display bestime text to screen AL
 
-        # draw best time text
-        
+        # draw current time text AL
+        currentTime = round(time.time() - gameStartTime, 1 )
+        currentTimeSurf = SMALLFONT.render("Time: %s" % currentTime,True,WHITE).convert_alpha()
+        currentTimeRect = currentTimeSurf.get_rect()
+        currentTimeRect.topright= (WINWIDTH - 22,40)
+        DISPLAYSURF.blit(currentTimeSurf,currentTimeRect)
 
         for event in pygame.event.get(): # event handling loop, if user exits the windown terminate program AL
             if event.type == pygame.QUIT:
@@ -368,7 +374,7 @@ def runGame():
                             
                             gameCompletionTime = time.time() - gameStartTime #the time it took to win relative to the start of that game AL
                             if gameCompletionTime < bestTime or bestTime == 0: # Check if current time is better than previous best AL
-                                timeToSave = round((gameCompletionTime/60), 2) # prepare new best timn for saving saved in mins AL
+                                timeToSave = int(gameCompletionTime) # prepare new best timn for saving saved in mins AL
                                 bestTime = timeToSave # store the new bes time AL
                                 writeToFile("besttime.txt", str(timeToSave)) #Save the time to file AL
                                 newBestMode = True #turn on the "new best mode" AL
@@ -399,8 +405,10 @@ def runGame():
             newBestTimeSurf = BASICFONT.render('NEW BEST TIME !!!', True, WHITE)
             newBestTimeRect = newBestTimeSurf.get_rect()
             newBestTimeRect.center = (HALF_WINWIDTH, HALF_WINHEIGHT - 80)
-
-            newBestTimeSurf2 = SMALLFONT.render("new best: " + str(bestTime), True, WHITE)
+            
+            newBestTimeMins = bestTime // 60
+            newBestTimeSecs = bestTime - (60 * newBestTimeMins)
+            newBestTimeSurf2 = SMALLFONT.render("new best: " + str(newBestTimeMins) + ":" + str(newBestTimeSecs), True, WHITE)
             newBestTimeRect2 = newBestTimeSurf2.get_rect()
             newBestTimeRect2.center = (HALF_WINWIDTH, HALF_WINHEIGHT - 40)
 
