@@ -69,6 +69,14 @@ Enemy Squirrel data structure keys:
     'bounce' - represents at what point in a bounce the player is in. 0 means standing (no bounce), up to BOUNCERATE (the completion of the bounce)
     'bouncerate' - how quickly the squirrel bounces. A lower number means a quicker bounce.
     'bounceheight' - how high (in pixels) the squirrel bounces
+Squirrel Type data structure keys:
+    'squirrel' - the plain, normal enemy squirrel
+    'squeinstein' - the einstein squirrel. gives player health, plus 5 seconds on time?
+    'squnicorn' - the unicorn squirrel. gives player health benefits
+    'squernobyl' - EXPLLLLLOOOOODDDDDEEEE. lethal death
+    'sqdrunk' - drunk squirrel makes drunken decision to harm player. invert controls
+    'sqghost' - ghost squirrel scares player. time or player frozen for short amount of time
+    'squampire' - extra fast squirrel that sucks players blood. lose health
 Grass data structure keys:
     'grassImage' - an integer that refers to the index of the pygame.Surface object in GRASSIMAGES used for this grass object
 """
