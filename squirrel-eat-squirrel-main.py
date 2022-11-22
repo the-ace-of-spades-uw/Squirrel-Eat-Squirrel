@@ -88,7 +88,8 @@ def main():  #allows the runGame() function to be put into script at the end    
     Loads images, surfacs, sounds and runs the main game AL
     """
     
-    global FPSCLOCK, DISPLAYSURF, BASICFONT, SMALLFONT, MEDIUMFONT,L_SQUIR_IMG, R_SQUIR_IMG, GRASSIMAGES, BOUNCESOUND, bestTime
+    global FPSCLOCK, DISPLAYSURF, BASICFONT, SMALLFONT, MEDIUMFONT,L_SQUIR_IMG, R_SQUIR_IMG, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG, \
+          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, bestTime
     
     pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
@@ -113,9 +114,28 @@ def main():  #allows the runGame() function to be put into script at the end    
     #Determine best time from file AL
     bestTime = int(readFromFile("besttime.txt"))
 
-    # load the image files
-    L_SQUIR_IMG = pygame.image.load(os.path.join(assets_folder,'squirrel.png')) # loads squirrel and enemy squirrel into code SS
-    R_SQUIR_IMG = pygame.transform.flip(L_SQUIR_IMG, True, False)
+    # load the image files of squirrels AL
+    L_SQUIR_IMG = loadImage(assets_folder,'squirrel.png') # loads squirrel and enemy squirrel into code SS
+    R_SQUIR_IMG = flipImage(L_SQUIR_IMG)
+
+    L_CHERNOBYL_IMG = loadImage(assets_folder,'chernobyl squirrel.png')
+    R_CHERNOBYL_IMG = flipImage(L_CHERNOBYL_IMG)
+
+    L_DRUNK_IMG = loadImage(assets_folder,'drunk squirrel.png')
+    R_DRUNK_IMG = flipImage(L_DRUNK_IMG)
+
+    L_EINSTEIN_IMG = loadImage(assets_folder,'einstein squirrel.png')
+    R_EINSTEIN_IMG = flipImage(L_EINSTEIN_IMG)
+
+    L_GHOST_IMG = loadImage(assets_folder,'ghost squirrel.png')
+    R_GHOST_IMG  = flipImage(L_GHOST_IMG)
+
+    L_VAMP_IMG = loadImage(assets_folder,'vampire squirrel.png')
+    R_VAMP_IMG = flipImage(L_VAMP_IMG)
+
+    L_UNICORN_IMG = loadImage(assets_folder,'unicorn squirrel.png')
+    R_UNICORN_IMG = flipImage(L_UNICORN_IMG)
+
     GRASSIMAGES = []
     for i in range(1, 5):
         GRASSIMAGES.append(pygame.image.load(os.path.join(assets_folder,'grass%s.png' % i)))
@@ -208,10 +228,10 @@ def runGame():
             if random.randint(0, 99) < DIRCHANGEFREQ:
                 sObj['movex'] = getRandomVelocity()
                 sObj['movey'] = getRandomVelocity()
-                if sObj['movex'] > 0: # faces right
-                    sObj['surface'] = pygame.transform.scale(R_SQUIR_IMG, (sObj['width'], sObj['height']))
+                if sObj['movex'] > 0: # faces right, using image stored in dict ensures it is specific to particualr type of squirrel AL
+                    sObj['surface'] = pygame.transform.scale(sObj['rightimg'], (sObj['width'], sObj['height']))
                 else: # faces left
-                    sObj['surface'] = pygame.transform.scale(L_SQUIR_IMG, (sObj['width'], sObj['height']))
+                    sObj['surface'] = pygame.transform.scale(sObj['leftimg'], (sObj['width'], sObj['height']))
 
 
         # go through all the objects and see if any need to be deleted.
@@ -230,19 +250,19 @@ def runGame():
             # pick random enemy squirrel to be spawned AL
             random_sqr_int = random.randint(0,100)
             if 0 <= random_sqr_int <= 40:
-                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'squirrel'))
             elif 40 < random_sqr_int <= 50:
-                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_EINSTEIN_IMG, R_EINSTEIN_IMG, 'squeinstein'))
             elif 50 < random_sqr_int <= 60:
-                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_UNICORN_IMG, R_UNICORN_IMG,'squnicorn'))
             elif 60 < random_sqr_int <= 70:
-                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG,'squernobyl'))
             elif 70 < random_sqr_int <= 80:
-                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_DRUNK_IMG, R_DRUNK_IMG,'sqdrunk'))
             elif 80 < random_sqr_int <= 90:
-                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_GHOST_IMG, R_GHOST_IMG,'sqghost'))
             else:
-                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_SQUIR_IMG, R_SQUIR_IMG,'regular'))
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_VAMP_IMG, R_VAMP_IMG,'squampire'))
 
 
         # Find the distance between game world coordinates of the centre of the camera
@@ -424,7 +444,7 @@ def runGame():
             DISPLAYSURF.blit(winSurf, winRect)
             DISPLAYSURF.blit(winSurf2, winRect2)
         
-        #check if player has set a new best time
+        #check if player has set a new best time AL
         if newBestMode:
             newBestTimeSurf = BASICFONT.render('NEW BEST TIME !!!', True, WHITE)
             newBestTimeRect = newBestTimeSurf.get_rect()
@@ -513,7 +533,7 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
 def makeNewSquirrel(camerax, cameray, leftSquirImg, rightSquirImg, sqrID):
     """
     (int,int) -> dict
-    Create a new squirrel "object"
+    Create a new squirrel "object", type specifies the type of squirrel AL
     """
     sq = {}
     generalSize = random.randint(5, 25)
@@ -523,6 +543,8 @@ def makeNewSquirrel(camerax, cameray, leftSquirImg, rightSquirImg, sqrID):
     sq['x'], sq['y'] = getRandomOffCameraPos(camerax, cameray, sq['width'], sq['height'])
     sq['movex'] = getRandomVelocity()
     sq['movey'] = getRandomVelocity()
+    sq['leftimg'] = leftSquirImg #store specific squirrels left and right images AL
+    sq['rightimg'] = rightSquirImg
     if sq['movex'] < 0: # squirrel is facing left
         sq['surface'] = pygame.transform.scale(leftSquirImg, (sq['width'], sq['height']))
     else: # squirrel is facing right
@@ -577,6 +599,20 @@ def readFromFile (file):
             return f.readline()
         except:
             return None
+
+def loadImage(folder,fileName):
+    """
+    (folder,str)-> img
+    load an image from a folder AL
+    """
+    return pygame.image.load(os.path.join(folder,fileName))
+
+def flipImage(image):
+    """
+    (img)-> img
+    flip and image AL
+    """
+    return pygame.transform.flip(image, True, False)
 
 # script behaviour of program AL
 if __name__ == '__main__':
