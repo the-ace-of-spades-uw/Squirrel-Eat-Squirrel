@@ -2,7 +2,7 @@
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
-# ***Team intials: Asa L (AL), Meridan D (MD) Sarina S (SS)), Hoyt S (HS)***
+# ***Team intials: Asa L (AL), Meridan D (MD) Sarina S (SS), Hoyt S (HS)***
 
 
 # Importing differnt modules AL
@@ -18,7 +18,7 @@ HALF_WINWIDTH = int(WINWIDTH / 2)
 HALF_WINHEIGHT = int(WINHEIGHT / 2)
 
 # Differnt colours expressed as tuples of RGB values AL
-GRASSCOLOR = (24, 255, 0)
+GRASSCOLOR = (24, 55, 50)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GOLD = (212,175,55) 
@@ -416,10 +416,12 @@ def runGame():
                         frozenmode = True
                         frozenmodestarttime = time.time()
                         moverate = 0
+                    # can we add a failure sound effect when player collides with a ghost squirrel so that it doesnt seem like a bug?  MD
+
                     # play soundeffect if player collides with Einstein squirrel AL
                     if sqObj['id'] == 'squeinstein':
                         EMODAMSF.play()
-                        
+                    # can we add a disco mode when you run into a unicorn?     MD   
 
 
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
