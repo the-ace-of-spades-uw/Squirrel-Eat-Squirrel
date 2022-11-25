@@ -380,40 +380,41 @@ def runGame():
                 elif event.key == pygame.K_ESCAPE: #Escape key can be used to quit program AL 
                     terminate()                    # terminates the game if esc is pressed SS
 
-       if not gameOverMode:
+        if not gameOverMode:
             # actually move the player
             if drunk == True:
-                    if moveLeft:
-                        playerObj['x'] += MOVERATE
-                        if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
-                            BOUNCESOUND.play()
-                    if moveRight:
-                        playerObj['x'] -= MOVERATE
-                        if not pygame.mixer.get_busy():
-                            BOUNCESOUND.play()
-                    if moveUp:
-                        playerObj['y'] += MOVERATE
-                        if not pygame.mixer.get_busy():
-                            BOUNCESOUND.play()
-                    if moveDown:
-                        playerObj['y'] -= MOVERATE
-                        if not pygame.mixer.get_busy():
-                            BOUNCESOUND.play()
-            else:
                 if moveLeft:
-                    playerObj['x'] -= MOVERATE
+                    playerObj['x'] += moverate
                     if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
                         BOUNCESOUND.play()
                 if moveRight:
-                    playerObj['x'] += MOVERATE
+                    playerObj['x'] -= moverate
                     if not pygame.mixer.get_busy():
                         BOUNCESOUND.play()
                 if moveUp:
-                    playerObj['y'] -= MOVERATE
+                    playerObj['y'] += moverate
                     if not pygame.mixer.get_busy():
                         BOUNCESOUND.play()
                 if moveDown:
-                    playerObj['y'] += MOVERATE
+                    playerObj['y'] -= moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+            
+            else:
+                if moveLeft:
+                    playerObj['x'] -= moverate
+                    if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
+                        BOUNCESOUND.play()
+                if moveRight:
+                    playerObj['x'] += moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveUp:
+                    playerObj['y'] -= moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveDown:
+                    playerObj['y'] += moverate
                     if not pygame.mixer.get_busy():
                         BOUNCESOUND.play()
 
@@ -428,7 +429,6 @@ def runGame():
                 sqObj = squirrelObjs[i]
                 if 'rect' in sqObj and playerObj['rect'].colliderect(sqObj['rect']):
                     # a player/squirrel collision has occurred using pygames rect module to check AL
-
                     drunk = True
                     # if player runs into a ghost squirrel, they will be unable to move for a set amount of time  MD
                     if sqObj['id'] == 'sqghost':
