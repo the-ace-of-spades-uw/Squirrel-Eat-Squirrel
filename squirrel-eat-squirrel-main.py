@@ -90,7 +90,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     """
     
     global FPSCLOCK, DISPLAYSURF, BASICFONT, SMALLFONT, MEDIUMFONT,L_SQUIR_IMG, R_SQUIR_IMG, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG, \
-          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, bestTime
+          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, EMODAMSF, bestTime
     
     pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
@@ -110,6 +110,8 @@ def main():  #allows the runGame() function to be put into script at the end    
 
     #load sound effects AL
     BOUNCESOUND = pygame.mixer.Sound(os.path.join(sound_folder,'bouncesound.ogg')) #make sure to load sound effects as ogg AL
+    EMODAMSF = pygame.mixer.Sound(os.path.join(sound_folder,'emodamSF.ogg'))
+    EMODAMSF.set_volume(0.5)
     BOUNCESOUND.set_volume(0.5)
 
     #Determine best time from file AL
@@ -414,9 +416,19 @@ def runGame():
                         frozenmode = True
                         frozenmodestarttime = time.time()
                         moverate = 0
+                    # play soundeffect if player collides with Einstein squirrel AL
+                    if sqObj['id'] == 'squeinstein':
+                        EMODAMSF.play()
+                        
+
 
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
                         # player is larger and eats the squirrel
+
+                        if sqObj['id'] == 'squeinstein': #add health if einstein squirrel is eathen AL
+                            if not invulnerableMode and playerObj['health'] != MAXHEALTH:
+                                playerObj['health'] += 1
+
                         playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
                         # determines how much the player's squirrel grows each time they eat a smaller squirrel   MD
 
