@@ -25,7 +25,7 @@ GOLD = (212,175,55)
 
 #assignment of the variables that will be used later in the creation of game functions   MD
 CAMERASLACK = 90     # how far from the center the squirrel moves before moving the camera
-MOVERATE = 9         # how fast the player moves
+moverate = 9         # how fast the player moves
 BOUNCERATE = 6       # how fast the player bounces (large is slower)
 BOUNCEHEIGHT = 30    # how high the player bounces
 STARTSIZE = 25       # how big the player starts off
@@ -33,6 +33,7 @@ WINSIZE = 300        # how big the player needs to be to win
 INVULNTIME = 2       # how long the player is invulnerable after being hit in seconds
 GAMEOVERTIME = 4     # how long the "game over" text stays on the screen in seconds
 MAXHEALTH = 3        # how much health the player starts with
+FREEZETIME = 3       # amount of time player will be frozen after colliding with a ghost squirrel MD
 
 NUMGRASS = 80        # number of grass objects in the active area
 NUMSQUIRRELS = 30    # number of squirrels in the active area
@@ -89,7 +90,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     """
     
     global FPSCLOCK, DISPLAYSURF, BASICFONT, SMALLFONT, MEDIUMFONT,L_SQUIR_IMG, R_SQUIR_IMG, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG, \
-          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, bestTime
+          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, EMODAMSF, bestTime
     
     pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
@@ -109,6 +110,8 @@ def main():  #allows the runGame() function to be put into script at the end    
 
     #load sound effects AL
     BOUNCESOUND = pygame.mixer.Sound(os.path.join(sound_folder,'bouncesound.ogg')) #make sure to load sound effects as ogg AL
+    EMODAMSF = pygame.mixer.Sound(os.path.join(sound_folder,'emodamSF.ogg'))
+    EMODAMSF.set_volume(0.5)
     BOUNCESOUND.set_volume(0.5)
 
     #Determine best time from file AL
@@ -146,7 +149,7 @@ def main():  #allows the runGame() function to be put into script at the end    
         # starts game once setup is complete SS
 
 def runGame():
-    global bestTime
+    global bestTime, moverate
     
     pygame.mixer.music.rewind() #rewind the music before each newgame AL
     pygame.mixer.music.play(loops=-1) #play music and keep looping it AL
@@ -157,6 +160,8 @@ def runGame():
     gameOverStartTime = 0     # time the player lost
     winMode = False           # if the player has won
     newBestMode = False       # if the player has beaten the previous best time AL
+    frozenmode = False        # if player avoids ghost squirrel MD
+    frozenmodestarttime = 0   
 
     gameStartTime = time.time() # record the start of a game relative to epoch AL
 
@@ -213,6 +218,11 @@ def runGame():
         if invulnerableMode and time.time() - invulnerableStartTime > INVULNTIME:
             invulnerableMode = False
 
+        # turns off the frozen mode     MD
+        if frozenmode and time.time() - frozenmodestarttime > FREEZETIME:
+            frozenmode = False
+            moverate = 9
+
         # move all the enemy squirrels
         # could reduce the bounce by decreasing BOUNCERATE to have levitating, ghost squrrels   MD
         for sObj in squirrelObjs:
@@ -262,7 +272,7 @@ def runGame():
             elif 80 < random_sqr_int <= 90:
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_GHOST_IMG, R_GHOST_IMG,'sqghost'))
             else:
-                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_VAMP_IMG, R_VAMP_IMG,'squampire'))
+                squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_VAMP_IMG, R_VAMP_IMG,'squampire', faster = True))
 
 
         # Find the distance between game world coordinates of the centre of the camera
@@ -372,22 +382,41 @@ def runGame():
 
         if not gameOverMode:
             # actually move the player
-            if moveLeft:
-                playerObj['x'] -= MOVERATE
-                if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
-                    BOUNCESOUND.play()
-            if moveRight:
-                playerObj['x'] += MOVERATE
-                if not pygame.mixer.get_busy():
-                    BOUNCESOUND.play()
-            if moveUp:
-                playerObj['y'] -= MOVERATE
-                if not pygame.mixer.get_busy():
-                    BOUNCESOUND.play()
-            if moveDown:
-                playerObj['y'] += MOVERATE
-                if not pygame.mixer.get_busy():
-                    BOUNCESOUND.play()
+            if drunk == True:
+                if moveLeft:
+                    playerObj['x'] += moverate
+                    if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
+                        BOUNCESOUND.play()
+                if moveRight:
+                    playerObj['x'] -= moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveUp:
+                    playerObj['y'] += moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveDown:
+                    playerObj['y'] -= moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+            
+            else:
+                if moveLeft:
+                    playerObj['x'] -= moverate
+                    if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
+                        BOUNCESOUND.play()
+                if moveRight:
+                    playerObj['x'] += moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveUp:
+                    playerObj['y'] -= moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveDown:
+                    playerObj['y'] += moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
 
             if (moveLeft or moveRight or moveUp or moveDown) or playerObj['bounce'] != 0:
                 playerObj['bounce'] += 1
@@ -400,11 +429,28 @@ def runGame():
                 sqObj = squirrelObjs[i]
                 if 'rect' in sqObj and playerObj['rect'].colliderect(sqObj['rect']):
                     # a player/squirrel collision has occurred using pygames rect module to check AL
+                    drunk = True
+                    # if player runs into a ghost squirrel, they will be unable to move for a set amount of time  MD
+                    if sqObj['id'] == 'sqghost':
+                        frozenmode = True
+                        frozenmodestarttime = time.time()
+                        moverate = 0
+                    # play soundeffect if player collides with Einstein squirrel AL
+                    if sqObj['id'] == 'squeinstein':
+                        EMODAMSF.play()
+                        
+
+
                     if sqObj['id'] == ('squernobyl'): # ends game immediately because of collision with squernobyl SS
                             gameOverMode = True
                             gameOverStartTime = time.time()
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
                         # player is larger and eats the squirrel
+
+                        if sqObj['id'] == 'squeinstein': #add health if einstein squirrel is eathen AL
+                            if not invulnerableMode and playerObj['health'] != MAXHEALTH:
+                                playerObj['health'] += 1
+
                         playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
                         # determines how much the player's squirrel grows each time they eat a smaller squirrel   MD
                         if sqObj['id'] == ('squnicorn'):
@@ -536,7 +582,7 @@ def getRandomOffCameraPos(camerax, cameray, objWidth, objHeight):
 
 # creates new enemy squirrels  of different sizes with placement, speed and direction determined randomly SS
 # Added new parameters for different enemy squirrels AL
-def makeNewSquirrel(camerax, cameray, leftSquirImg, rightSquirImg, sqrID):
+def makeNewSquirrel(camerax, cameray, leftSquirImg, rightSquirImg, sqrID, faster = False):
     """
     (int,int) -> dict
     Create a new squirrel "object", type specifies the type of squirrel AL
@@ -547,8 +593,13 @@ def makeNewSquirrel(camerax, cameray, leftSquirImg, rightSquirImg, sqrID):
     sq['width']  = (generalSize + random.randint(0, 10)) * multiplier
     sq['height'] = (generalSize + random.randint(0, 10)) * multiplier
     sq['x'], sq['y'] = getRandomOffCameraPos(camerax, cameray, sq['width'], sq['height'])
-    sq['movex'] = getRandomVelocity()
-    sq['movey'] = getRandomVelocity()
+    # allows optional adjustable speed arguement for different squirrels   MD
+    if faster == True:
+        sq['movex'] = getRandomVelocity() * 7
+        sq['movey'] = getRandomVelocity() * 6.9
+    else:
+        sq['movex'] = getRandomVelocity()
+        sq['movey'] = getRandomVelocity()
     sq['leftimg'] = leftSquirImg #store specific squirrels left and right images AL
     sq['rightimg'] = rightSquirImg
     if sq['movex'] < 0: # squirrel is facing left
