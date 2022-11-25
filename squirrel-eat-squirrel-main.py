@@ -18,7 +18,7 @@ HALF_WINWIDTH = int(WINWIDTH / 2)
 HALF_WINHEIGHT = int(WINHEIGHT / 2)
 
 # Differnt colours expressed as tuples of RGB values AL
-GRASSCOLOR = (24, 255, 0)
+GRASSCOLOR = (24, 255, 250)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GOLD = (212,175,55) 
@@ -400,10 +400,16 @@ def runGame():
                 sqObj = squirrelObjs[i]
                 if 'rect' in sqObj and playerObj['rect'].colliderect(sqObj['rect']):
                     # a player/squirrel collision has occurred using pygames rect module to check AL
+                    if sqObj['id'] == ('squernobyl'): # ends game immediately because of collision with squernobyl SS
+                            gameOverMode = True
+                            gameOverStartTime = time.time()
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
                         # player is larger and eats the squirrel
                         playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
                         # determines how much the player's squirrel grows each time they eat a smaller squirrel   MD
+                        if sqObj['id'] == ('squnicorn'):
+                            playerObj ['health'] = 3
+                            
 
                         del squirrelObjs[i]
 
@@ -420,7 +426,7 @@ def runGame():
                             if gameCompletionTime < bestTime or bestTime == 0: # Check if current time is better than previous best AL
                                 timeToSave = int(gameCompletionTime) # prepare new best timn for saving saved in mins AL
                                 bestTime = timeToSave # store the new bes time AL
-                                writeToFile("besttime.txt", str(timeToSave)) #Save the time to file AL
+                                writeToFile("besttime.txt", str(timeToSave)) # Save the time to file AL
                                 newBestMode = True #turn on the "new best mode" AL
                             
 
@@ -437,7 +443,7 @@ def runGame():
             DISPLAYSURF.blit(gameOverSurf, gameOverRect)
             pygame.mixer.music.fadeout(int(time.time() - gameOverStartTime)) #fade out the music over aprox the time it take to start a new game AL
             if time.time() - gameOverStartTime > GAMEOVERTIME:
-                return # end the current game
+                return  #end the current game
 
         # check if the player has won.
         if winMode:
