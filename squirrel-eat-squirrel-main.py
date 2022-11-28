@@ -382,22 +382,41 @@ def runGame():
 
         if not gameOverMode:
             # actually move the player
-            if moveLeft:
-                playerObj['x'] -= moverate
-                if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
-                    BOUNCESOUND.play()
-            if moveRight:
-                playerObj['x'] += moverate
-                if not pygame.mixer.get_busy():
-                    BOUNCESOUND.play()
-            if moveUp:
-                playerObj['y'] -= moverate
-                if not pygame.mixer.get_busy():
-                    BOUNCESOUND.play()
-            if moveDown:
-                playerObj['y'] += moverate
-                if not pygame.mixer.get_busy():
-                    BOUNCESOUND.play()
+            if drunk == True:
+                if moveLeft:
+                    playerObj['x'] += moverate
+                    if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
+                        BOUNCESOUND.play()
+                if moveRight:
+                    playerObj['x'] -= moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveUp:
+                    playerObj['y'] += moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveDown:
+                    playerObj['y'] -= moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+            
+            else:
+                if moveLeft:
+                    playerObj['x'] -= moverate
+                    if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
+                        BOUNCESOUND.play()
+                if moveRight:
+                    playerObj['x'] += moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveUp:
+                    playerObj['y'] -= moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
+                if moveDown:
+                    playerObj['y'] += moverate
+                    if not pygame.mixer.get_busy():
+                        BOUNCESOUND.play()
 
             if (moveLeft or moveRight or moveUp or moveDown) or playerObj['bounce'] != 0:
                 playerObj['bounce'] += 1
@@ -410,7 +429,7 @@ def runGame():
                 sqObj = squirrelObjs[i]
                 if 'rect' in sqObj and playerObj['rect'].colliderect(sqObj['rect']):
                     # a player/squirrel collision has occurred using pygames rect module to check AL
-
+                    drunk = True
                     # if player runs into a ghost squirrel, they will be unable to move for a set amount of time  MD
                     if sqObj['id'] == 'sqghost':
                         frozenmode = True
@@ -424,6 +443,9 @@ def runGame():
                     # can we add a disco mode when you run into a unicorn?     MD   
 
 
+                    if sqObj['id'] == ('squernobyl'): # ends game immediately because of collision with squernobyl SS
+                            gameOverMode = True
+                            gameOverStartTime = time.time()
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
                         # player is larger and eats the squirrel
 
@@ -433,6 +455,9 @@ def runGame():
 
                         playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
                         # determines how much the player's squirrel grows each time they eat a smaller squirrel   MD
+                        if sqObj['id'] == ('squnicorn'):
+                            playerObj ['health'] = 3
+                            
 
                         del squirrelObjs[i]
 
@@ -449,7 +474,7 @@ def runGame():
                             if gameCompletionTime < bestTime or bestTime == 0: # Check if current time is better than previous best AL
                                 timeToSave = int(gameCompletionTime) # prepare new best timn for saving saved in mins AL
                                 bestTime = timeToSave # store the new bes time AL
-                                writeToFile("besttime.txt", str(timeToSave)) #Save the time to file AL
+                                writeToFile("besttime.txt", str(timeToSave)) # Save the time to file AL
                                 newBestMode = True #turn on the "new best mode" AL
                             
 
@@ -466,7 +491,7 @@ def runGame():
             DISPLAYSURF.blit(gameOverSurf, gameOverRect)
             pygame.mixer.music.fadeout(int(time.time() - gameOverStartTime)) #fade out the music over aprox the time it take to start a new game AL
             if time.time() - gameOverStartTime > GAMEOVERTIME:
-                return # end the current game
+                return  #end the current game
 
         # check if the player has won.
         if winMode:
