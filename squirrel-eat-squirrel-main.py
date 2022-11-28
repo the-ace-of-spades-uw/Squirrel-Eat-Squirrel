@@ -140,7 +140,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     R_UNICORN_IMG = flipImage(L_UNICORN_IMG)
 
     GRASSIMAGES = []
-    for i in range(1, 5):
+    for i in range(1, 6):
         GRASSIMAGES.append(pygame.image.load(os.path.join(assets_folder,'grass%s.png' % i)))
 
     while True:
