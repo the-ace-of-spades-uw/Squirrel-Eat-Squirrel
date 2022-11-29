@@ -18,10 +18,17 @@ HALF_WINWIDTH = int(WINWIDTH / 2)
 HALF_WINHEIGHT = int(WINHEIGHT / 2)
 
 # Differnt colours expressed as tuples of RGB values AL
-GRASSCOLOR = (24, 255, 250)
+GRASSCOLOR = (24, 255, 0)
 WHITE = (255, 255, 255)
+VIOLET = (148,0,211)
+INDIGO = (75,0,130)
+BLUE = (0,0,255)
+GREEN = (0,255,0)
+YELLOW = (255,255,0)
+ORANGE = (255,127,0)
 RED = (255, 0, 0)
-GOLD = (212,175,55) 
+# list of colours for disco mode AL
+rainbowList = [VIOLET,BLUE,GREEN,YELLOW,ORANGE,RED]
 
 #assignment of the variables that will be used later in the creation of game functions   MD
 CAMERASLACK = 90     # how far from the center the squirrel moves before moving the camera
@@ -34,6 +41,9 @@ INVULNTIME = 2       # how long the player is invulnerable after being hit in se
 GAMEOVERTIME = 4     # how long the "game over" text stays on the screen in seconds
 MAXHEALTH = 3        # how much health the player starts with
 FREEZETIME = 3       # amount of time player will be frozen after colliding with a ghost squirrel MD
+DRUNKTIME = 4        # how long the player stays in drunk mode AL
+DISCOTIME = 3        # how long the game stays in discomode AL
+CHANGECOLOURTIME = 0.0015   # amount of time between colour changes in disco mode AL
 
 NUMGRASS = 80        # number of grass objects in the active area
 NUMSQUIRRELS = 30    # number of squirrels in the active area
@@ -161,7 +171,14 @@ def runGame():
     winMode = False           # if the player has won
     newBestMode = False       # if the player has beaten the previous best time AL
     frozenmode = False        # if player avoids ghost squirrel MD
-    frozenmodestarttime = 0   
+    drunkmode = False         # if the player is in drunk mode AL
+    discomode = False         # if the player has eaten the unicorn squirrel activate a disco AL
+    frozenmodestarttime = 0   # These variables measure start times of various game events Al
+    drunkmodestarttime = 0    #                                                             |
+    discomodestarttime = 0    #                                                             |
+    changecolourstarttime = 0 #                                                             v
+
+    backgroundColour = GRASSCOLOR
 
     gameStartTime = time.time() # record the start of a game relative to epoch AL
 
@@ -222,6 +239,14 @@ def runGame():
         if frozenmode and time.time() - frozenmodestarttime > FREEZETIME:
             frozenmode = False
             moverate = 9
+        
+        # turns off drunk mode if needed AL
+        if drunkmode and time.time() - drunkmodestarttime > DRUNKTIME:
+            drunkmode = False 
+        
+        #turns off disco mode if needed AL
+        if discomode and time.time() - discomodestarttime > DISCOTIME:
+            discomode = False
 
         # move all the enemy squirrels
         # could reduce the bounce by decreasing BOUNCERATE to have levitating, ghost squrrels   MD
@@ -265,7 +290,7 @@ def runGame():
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_EINSTEIN_IMG, R_EINSTEIN_IMG, 'squeinstein'))
             elif 50 < random_sqr_int <= 60:
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_UNICORN_IMG, R_UNICORN_IMG,'squnicorn'))
-            elif 60 < random_sqr_int <= 70:
+            elif 68 < random_sqr_int <= 70: 
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG,'squernobyl'))
             elif 70 < random_sqr_int <= 80:
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_DRUNK_IMG, R_DRUNK_IMG,'sqdrunk'))
@@ -294,8 +319,17 @@ def runGame():
             cameray = playerCentery - CAMERASLACK - HALF_WINHEIGHT
 
         #******** DRAWING AL **********
-        # draw the green background
-        DISPLAYSURF.fill(GRASSCOLOR) 
+        
+        # if the discomode is activated change the colour of the background each time through the main loop AL
+        if discomode and (time.time() - changecolourstarttime > CHANGECOLOURTIME): 
+            backgroundColour = rainbowList[random.randint(0,len(rainbowList)-1)]
+            changecolourstarttime = time.time()
+        else:
+            backgroundColour = GRASSCOLOR # Otherwise background colour is just the grass colour AL
+        
+        DISPLAYSURF.fill(backgroundColour) 
+
+        
 
         # draw all the grass objects on the screen
         for gObj in grassObjs:
@@ -381,8 +415,9 @@ def runGame():
                     terminate()                    # terminates the game if esc is pressed SS
 
         if not gameOverMode:
-            # actually move the player
-            if drunk == True:
+            # Move the player 
+            # If in drunk mode invert the contorls AL
+            if drunkmode:
                 if moveLeft:
                     playerObj['x'] += moverate
                     if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
@@ -403,7 +438,7 @@ def runGame():
             else:
                 if moveLeft:
                     playerObj['x'] -= moverate
-                    if not pygame.mixer.get_busy(): # ensures sound effect is played to completion before it is played again, might cause issues with later sound effects AL
+                    if not pygame.mixer.get_busy(): 
                         BOUNCESOUND.play()
                 if moveRight:
                     playerObj['x'] += moverate
@@ -429,7 +464,6 @@ def runGame():
                 sqObj = squirrelObjs[i]
                 if 'rect' in sqObj and playerObj['rect'].colliderect(sqObj['rect']):
                     # a player/squirrel collision has occurred using pygames rect module to check AL
-                    drunk = True
                     # if player runs into a ghost squirrel, they will be unable to move for a set amount of time  MD
                     if sqObj['id'] == 'sqghost':
                         frozenmode = True
@@ -444,17 +478,25 @@ def runGame():
                     if sqObj['id'] == ('squernobyl'): # ends game immediately because of collision with squernobyl SS
                             gameOverMode = True
                             gameOverStartTime = time.time()
+
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
-                        # player is larger and eats the squirrel
+                        # player is larger and eats the squirrel AL
 
                         if sqObj['id'] == 'squeinstein': #add health if einstein squirrel is eathen AL
                             if not invulnerableMode and playerObj['health'] != MAXHEALTH:
                                 playerObj['health'] += 1
+                        
+                        if sqObj['id'] == ('squnicorn'): # if unicorn squirrel eaten give player full health and start disco mode AL
+                            playerObj ['health'] = 3
+                            discomode = True
+                            discomodestarttime = time.time()
+                        
+                        if sqObj['id'] == 'sqdrunk': #if player eats drunk squirrel enter drunk mode (invert controls) AL
+                            drunkmode = True
+                            drunkmodestarttime = time.time()
 
                         playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
                         # determines how much the player's squirrel grows each time they eat a smaller squirrel   MD
-                        if sqObj['id'] == ('squnicorn'):
-                            playerObj ['health'] = 3
                             
 
                         del squirrelObjs[i]
@@ -514,32 +556,13 @@ def runGame():
         pygame.display.update()
         FPSCLOCK.tick(FPS)
         # updates the display by defining the frames per second to previously set FPS = 30     MD
-
-
-
-
+        
 def drawHealthMeter(currentHealth):
     for i in range(currentHealth): # draw red health bars, need to find a way to increase maxhealth but not above a limit AL
         pygame.draw.rect(DISPLAYSURF, RED,   (15, 5 + (10 * MAXHEALTH) - i * 10, 20, 10))
     for i in range(MAXHEALTH): # draw the white outlines
         pygame.draw.rect(DISPLAYSURF, WHITE, (15, 5 + (10 * MAXHEALTH) - i * 10, 20, 10), 1)
         
-def drunkSquirrel():
-    None
-    #Actions for drunk Squirrel
-
-def vampireSquirrel():
-    None
-    #Actions for vampire Squirrel
-
-def chernobylSquirrel():
-    None
-    #Actions for chernobyl Squirrel
-
-def ghostSquirrel():
-    None
-    #Actions for ghost Squirrel
-
 def terminate():
     """
     (None) -> None
