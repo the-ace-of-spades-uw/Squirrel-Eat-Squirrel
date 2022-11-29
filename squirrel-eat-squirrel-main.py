@@ -2,7 +2,7 @@
 # By Al Sweigart al@inventwithpython.com
 # http://inventwithpython.com/pygame
 # Released under a "Simplified BSD" license
-# ***Team intials: Asa L (AL), Meridan D (MD) Sarina S (SS)), Hoyt S (HS)***
+# ***Team intials: Asa L (AL), Meridan D (MD) Sarina S (SS), Hoyt S (HS)***
 
 
 # Importing differnt modules AL
@@ -469,10 +469,12 @@ def runGame():
                         frozenmode = True
                         frozenmodestarttime = time.time()
                         moverate = 0
+                    # can we add a failure sound effect when player collides with a ghost squirrel so that it doesnt seem like a bug?  MD
+
                     # play soundeffect if player collides with Einstein squirrel AL
                     if sqObj['id'] == 'squeinstein':
                         EMODAMSF.play()
-                        
+                    # can we add a disco mode when you run into a unicorn?     MD   
 
 
                     if sqObj['id'] == ('squernobyl'): # ends game immediately because of collision with squernobyl SS
