@@ -42,8 +42,8 @@ GAMEOVERTIME = 4     # how long the "game over" text stays on the screen in seco
 MAXHEALTH = 3        # how much health the player starts with
 FREEZETIME = 3       # amount of time player will be frozen after colliding with a ghost squirrel MD
 DRUNKTIME = 4        # how long the player stays in drunk mode AL
-DISCOTIME = 3        # how long the game stays in discomode AL
-CHANGECOLOURTIME = 0.0015   # amount of time between colour changes in disco mode AL
+DISCOTIME = 3     # how long the game stays in discomode AL
+CHANGECOLOURTIME = 0.1 # amount of time between colour changes in disco mode AL
 
 NUMGRASS = 80        # number of grass objects in the active area
 NUMSQUIRRELS = 30    # number of squirrels in the active area
@@ -100,7 +100,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     """
     
     global FPSCLOCK, DISPLAYSURF, BASICFONT, SMALLFONT, MEDIUMFONT,L_SQUIR_IMG, R_SQUIR_IMG, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG, \
-          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, EMODAMSF, bestTime
+          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, EMODAMSF, bestTime, EXPANIMATION
     
     pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
@@ -148,6 +148,11 @@ def main():  #allows the runGame() function to be put into script at the end    
 
     L_UNICORN_IMG = loadImage(assets_folder,'unicorn squirrel.png')
     R_UNICORN_IMG = flipImage(L_UNICORN_IMG)
+
+    EXP1 = loadImage(assets_folder,'explosion1.png')
+    EXP2 = loadImage(assets_folder,'explosion2.png')
+    EXP3 = loadImage(assets_folder,'explosion3.png')
+    EXPANIMATION = [EXP1,EXP2,EXP3]
 
     GRASSIMAGES = []
     for i in range(1, 6):
@@ -290,7 +295,7 @@ def runGame():
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_EINSTEIN_IMG, R_EINSTEIN_IMG, 'squeinstein'))
             elif 50 < random_sqr_int <= 60:
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_UNICORN_IMG, R_UNICORN_IMG,'squnicorn'))
-            elif 68 < random_sqr_int <= 70: 
+            elif 60 < random_sqr_int <= 70: 
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG,'squernobyl'))
             elif 70 < random_sqr_int <= 80:
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_DRUNK_IMG, R_DRUNK_IMG,'sqdrunk'))
@@ -324,10 +329,10 @@ def runGame():
         if discomode and (time.time() - changecolourstarttime > CHANGECOLOURTIME): 
             backgroundColour = rainbowList[random.randint(0,len(rainbowList)-1)]
             changecolourstarttime = time.time()
-        else:
+        elif not discomode:
             backgroundColour = GRASSCOLOR # Otherwise background colour is just the grass colour AL
         
-        DISPLAYSURF.fill(backgroundColour) 
+        DISPLAYSURF.fill(backgroundColour) #display the background colour AL
 
         
 
@@ -477,7 +482,7 @@ def runGame():
                     # can we add a disco mode when you run into a unicorn?     MD   
 
 
-                    if sqObj['id'] == ('squernobyl'): # ends game immediately because of collision with squernobyl SS
+                    if sqObj['id'] == ('squernobyl'): # ends game immediately because of collision with squernobyl SS]
                             gameOverMode = True
                             gameOverStartTime = time.time()
 
