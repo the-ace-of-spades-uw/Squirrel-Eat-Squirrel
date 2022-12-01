@@ -4,7 +4,7 @@
 # Released under a "Simplified BSD" license
 # ***Team intials: Asa L (AL), Meridan D (MD) Sarina S (SS), Hoyt S (HS)***
 
-
+#***Section 1 Sarina***
 # Importing differnt modules AL
 import random, sys, time, math, pygame,os
 # Import pygame locals into script namespace AL
@@ -100,7 +100,7 @@ def main():  #allows the runGame() function to be put into script at the end    
     """
     
     global FPSCLOCK, DISPLAYSURF, BASICFONT, SMALLFONT, MEDIUMFONT,L_SQUIR_IMG, R_SQUIR_IMG, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG, \
-          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, EMODAMSF, bestTime, EXPANIMATION
+          L_DRUNK_IMG,R_DRUNK_IMG,L_EINSTEIN_IMG,R_EINSTEIN_IMG,L_GHOST_IMG,R_GHOST_IMG,L_VAMP_IMG,R_VAMP_IMG,L_UNICORN_IMG,R_UNICORN_IMG, GRASSIMAGES, BOUNCESOUND, EMODAMSF, bestTime
     
     pygame.init() #intialize python modules AL
     FPSCLOCK = pygame.time.Clock()
@@ -149,11 +149,6 @@ def main():  #allows the runGame() function to be put into script at the end    
     L_UNICORN_IMG = loadImage(assets_folder,'unicorn squirrel.png')
     R_UNICORN_IMG = flipImage(L_UNICORN_IMG)
 
-    EXP1 = loadImage(assets_folder,'explosion1.png')
-    EXP2 = loadImage(assets_folder,'explosion2.png')
-    EXP3 = loadImage(assets_folder,'explosion3.png')
-    EXPANIMATION = [EXP1,EXP2,EXP3]
-
     GRASSIMAGES = []
     for i in range(1, 6):
         GRASSIMAGES.append(pygame.image.load(os.path.join(assets_folder,'grass%s.png' % i)))
@@ -162,7 +157,7 @@ def main():  #allows the runGame() function to be put into script at the end    
         runGame()
         # loop that calls the game to run when main() is in the script   MD
         # starts game once setup is complete SS
-
+# ***section 2 Meridan***
 def runGame():
     global bestTime, moverate
     
@@ -295,7 +290,7 @@ def runGame():
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_EINSTEIN_IMG, R_EINSTEIN_IMG, 'squeinstein'))
             elif 50 < random_sqr_int <= 60:
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_UNICORN_IMG, R_UNICORN_IMG,'squnicorn'))
-            elif 60 < random_sqr_int <= 70: 
+            elif 68 < random_sqr_int <= 70: 
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_CHERNOBYL_IMG, R_CHERNOBYL_IMG,'squernobyl'))
             elif 70 < random_sqr_int <= 80:
                 squirrelObjs.append(makeNewSquirrel(camerax, cameray, L_DRUNK_IMG, R_DRUNK_IMG,'sqdrunk'))
@@ -376,6 +371,8 @@ def runGame():
         currentTimeRect = currentTimeSurf.get_rect()
         currentTimeRect.topright= (WINWIDTH - 22,40)
         DISPLAYSURF.blit(currentTimeSurf,currentTimeRect)
+
+        #***section3 Asa***
 
         for event in pygame.event.get(): # event handling loop, if user exits the windown terminate program AL
             if event.type == pygame.QUIT:
@@ -486,6 +483,7 @@ def runGame():
                             gameOverMode = True
                             gameOverStartTime = time.time()
 
+
                     if sqObj['width'] * sqObj['height'] <= playerObj['size']**2:
                         # player is larger and eats the squirrel AL
 
@@ -503,7 +501,7 @@ def runGame():
                             drunkmodestarttime = time.time()
 
                         playerObj['size'] += int( (sqObj['width'] * sqObj['height'])**0.2 ) + 1
-                        # determines how much the player's squirrel grows each time they eat a smaller squirrel   MD
+                        # determines how much the player's squirrel grows each time they eat a smaller squirrel g  MD
                             
 
                         del squirrelObjs[i]
@@ -539,7 +537,8 @@ def runGame():
             pygame.mixer.music.fadeout(int(time.time() - gameOverStartTime)) #fade out the music over aprox the time it take to start a new game AL
             if time.time() - gameOverStartTime > GAMEOVERTIME:
                 return  #end the current game
-
+        
+        #***Section 4 Hoyt***
         # check if the player has won.
         if winMode:
             DISPLAYSURF.blit(winSurf, winRect)
